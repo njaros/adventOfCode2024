@@ -473,11 +473,11 @@ namespace inputLib
 //Usefull class and containers
 
 template<class T, class U>
-class Graphe
+class Tries
 {
-	std::allocator< Graphe < T, U > > Alloc;
-	std::allocator_traits< std::allocator< Graphe< T, U > > > _alloc;
-	std::map< T, Graphe< T, U >* > _childs;
+	std::allocator< Tries < T, U > > Alloc;
+	std::allocator_traits< std::allocator< Tries< T, U > > > _alloc;
+	std::map< T, Tries< T, U >* > _childs;
 	U _value;
 	size_t _weight;
 	bool _valueReadable;
@@ -495,11 +495,11 @@ class Graphe
 		}
 		else
 		{
-			Graphe* child = 0;
+			Tries* child = 0;
 			if (_childs.find(*cit) == _childs.end())
 			{
 				child = _alloc.allocate(Alloc, 1);
-				_alloc.construct(Alloc, child, Graphe< T, U >());
+				_alloc.construct(Alloc, child, Tries< T, U >());
 				_childs[*cit] = child;
 				writeValue = true;
 			}
@@ -530,7 +530,7 @@ class Graphe
 	{
 		if (_valueReadable)
 			std::cout << v << " : " << _value << std::endl;
-		for (std::pair< T, Graphe< T, U >* > elt : _childs)
+		for (std::pair< T, Tries< T, U >* > elt : _childs)
 		{
 			v.push_back(elt.first);
 			elt.second->_print(v);
@@ -540,11 +540,11 @@ class Graphe
 
 public:
 
-	Graphe() : _value(U()), _weight(0), _valueReadable(false) {}
+	Tries() : _value(U()), _weight(0), _valueReadable(false) {}
 
-	~Graphe()
+	~Tries()
 	{
-		for (typename std::map< T, Graphe< T, U>* >::iterator it = _childs.begin(); it != _childs.end(); ++it)
+		for (typename std::map< T, Tries< T, U>* >::iterator it = _childs.begin(); it != _childs.end(); ++it)
 		{
 			_alloc.destroy(Alloc, it->second);
 			_alloc.deallocate(Alloc, it->second, 1);
@@ -558,9 +558,9 @@ public:
 		_addRecu(c, v, c.begin(), true);
 	}
 
-	const Graphe< T, U >* browse(const T& c) const
+	const Tries< T, U >* browse(const T& c) const
 	{
-		typename std::map< T, Graphe< T, U >* >::const_iterator find = _childs.find(c);
+		typename std::map< T, Tries< T, U >* >::const_iterator find = _childs.find(c);
 		if (find != _childs.end())
 			return find->second;
 		return 0;
@@ -605,5 +605,42 @@ public:
 		_print(std::vector< T >());
 	}
 };
+
+namespace experiment
+{
+
+    /**
+     * @brief This class build a 32 sized array of bits to represents an unsigned int.
+     * 
+     */
+    class MyNatural
+    {
+    protected:
+
+        bool		_n[32];
+        const int	_bitSize = 32;
+
+    public:
+
+        MyNatural();
+        MyNatural(unsigned int n);
+        MyNatural(const MyNatural &other);
+        MyNatural	&operator=(const MyNatural &other);
+
+        //GETTER
+
+        const bool	*getData() const;
+        int	getSize() const;
+        unsigned int	getUnsignedInt() const;
+
+        //OPERATORS OVERLOADS
+
+        MyNatural	&operator+=(const MyNatural &rhs);
+
+    };
+
+    std::ostream	&operator<<(std::ostream &o, const MyNatural &n);
+
+}
 
 #endif
