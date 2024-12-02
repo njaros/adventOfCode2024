@@ -447,7 +447,7 @@ std::ostream& operator<<(std::ostream& o, const Grid<T>& g)
 
 unsigned int secureGetNumber();
 
-int getFileAndPart(int day, std::ifstream* in, unsigned int* part);
+int getFileAndPart(int day, std::ifstream& in, unsigned int& part);
 
 std::optional< long long > divisible(long long a, long long b);
 
@@ -460,10 +460,11 @@ namespace math
 
 namespace inputLib
 {
+	typedef std::pair< std::optional<long>, char > extracted;
 
 	std::pair<long, bool> extractNextNumber(std::ifstream& input, char& monitorChar);
 
-	std::pair< std::optional<long>, char> extractNextNumber(std::ifstream& input);
+	extracted extractNextNumber(std::ifstream& input);
 
 	char goToNextLine(std::ifstream& input, char& monitorChar, unsigned int times = 1);
 

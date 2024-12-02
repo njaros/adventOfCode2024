@@ -64,24 +64,21 @@ unsigned int secureGetNumber()
 	return atoi(buffer.c_str());
 }
 
-int getFileAndPart(int day, std::ifstream* in, unsigned int* part)
+int getFileAndPart(int day, std::ifstream& in, unsigned int& part)
 {
-	if (in)
+	std::string toOpen = "./inputs/input" + std::to_string(day);
+	in.open(toOpen);
+	if (in.fail())
 	{
-		std::string toOpen = "./inputs/input" + std::to_string(day);
-		in->open(toOpen);
-		if (in->fail())
-		{
-			std::cerr << "Couldn't open file " << toOpen << " : " << strerror(errno) << std::endl;
-			return 1;
-		}
+		std::cerr << "Couldn't open file " << toOpen << " : " << strerror(errno) << std::endl;
+		return 1;
 	}
 	if (part)
 	{
 		std::cout << "which part ? (1 or 2)\r\n";
-		std::cin >> *part;
-		if (*part != 2)
-			*part = 1;
+		std::cin >> part;
+		if (part != 2)
+			part = 1;
 	}
 	return 0;
 }
@@ -172,7 +169,7 @@ std::pair<long, bool> inputLib::extractNextNumber(std::ifstream& input, char& mo
 	return std::make_pair(res, false);
 }
 
-std::pair< std::optional<long>, char > inputLib::extractNextNumber(std::ifstream& input)
+inputLib::extracted inputLib::extractNextNumber(std::ifstream& input)
 {
 	char monitorChar = input.get();
 	long res = 0;

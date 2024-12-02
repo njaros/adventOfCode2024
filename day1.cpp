@@ -8,10 +8,10 @@ int main(void) {
     std::priority_queue<int> left;
     std::vector<int> leftVec;
     std::map<int, int> rightMap;
-    std::pair<std::optional<long>, char> extracted;
+    inputLib::extracted extracted;
     long result = 0;
 
-    if (getFileAndPart(1, &input, &part))
+    if (getFileAndPart(1, input, part))
         return errno;
 
     while (extracted.second != EOF) {
