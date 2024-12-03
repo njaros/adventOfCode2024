@@ -73,7 +73,7 @@ int getFileAndPart(int day, std::ifstream& in, unsigned int& part)
 		std::cerr << "Couldn't open file " << toOpen << " : " << strerror(errno) << std::endl;
 		return 1;
 	}
-	if (part)
+	if (part != 5)
 	{
 		std::cout << "which part ? (1 or 2)\r\n";
 		std::cin >> part;
