@@ -14,6 +14,7 @@
 #include <tuple>
 #include <map>
 #include <set>
+#include <list>
 #include <vector>
 #include <deque>
 #include <optional>
@@ -55,8 +56,9 @@ std::ostream& operator<<(std::ostream& o, const std::vector<T>& v)
 {
 	for (const T& elt : v)
 	{
-		o << elt;
+		o << elt << ' ';
 	}
+	o << '\n';
 	return o;
 }
 
@@ -465,6 +467,8 @@ namespace inputLib
 	std::pair<long, bool> extractNextNumber(std::ifstream& input, char& monitorChar);
 
 	extracted extractNextNumber(std::ifstream& input);
+
+	extracted extractNextNumberEndline(std::ifstream& input);
 
 	char goToNextLine(std::ifstream& input, char& monitorChar, unsigned int times = 1);
 

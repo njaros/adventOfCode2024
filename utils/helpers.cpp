@@ -195,6 +195,32 @@ inputLib::extracted inputLib::extractNextNumber(std::ifstream& input)
 	return std::make_pair(std::nullopt, monitorChar);
 }
 
+inputLib::extracted inputLib::extractNextNumberEndline(std::ifstream& input)
+{
+	char monitorChar = input.get();
+	long res = 0;
+	long sign = 1;
+	while (monitorChar != EOF && monitorChar != '\n')
+	{
+		if (isdigit(monitorChar))
+		{
+			while (isdigit(monitorChar))
+			{
+				res *= 10;
+				res += monitorChar - '0';
+				monitorChar = input.get();
+			}
+			return std::make_pair(res * sign, monitorChar);
+		}
+		if (monitorChar != '+' && monitorChar != '-')
+			sign = 1;
+		else if (monitorChar == '-')
+			sign *= -1;
+		monitorChar = input.get();
+	}
+	return std::make_pair(std::nullopt, monitorChar);
+}
+
 char inputLib::goToNextLine(std::ifstream& input, char& monitorChar, unsigned int times)
 {
 	while (times-- && monitorChar != EOF)
