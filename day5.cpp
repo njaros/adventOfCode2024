@@ -50,7 +50,6 @@ int main() {
     ui part = 1;
     std::ifstream input;
     inputLib::extracted extracted;
-    std::pair<int, int> readingRule;
     ui res = 0;
     int first;
     int second;
