@@ -1,10 +1,5 @@
 #include "utils/helpers.hpp"
 
-#define UP 0
-#define RIGHT 1
-#define DOWN 2
-#define LEFT 3
-
 typedef std::pair<Coord, int> Guard;
 
 Guard turn(Guard g) {
@@ -12,12 +7,7 @@ Guard turn(Guard g) {
 }
 
 Guard next(Guard guard, const Grid<char>& grid) {
-    Coord moves[] = {
-        Coord(0, -1),
-        Coord(1, 0),
-        Coord(0, 1),
-        Coord(-1, 0)
-        };
+    Coord moves[] = {Coord(0, -1), Coord(1, 0), Coord(0, 1), Coord(-1, 0)};
     
     Guard nextGuard = std::make_pair(guard.first + moves[guard.second], guard.second);
     if (grid.inBounds(nextGuard.first) && grid.get(nextGuard.first) == '#') {
@@ -59,7 +49,7 @@ int main () {
         grid.addBackLine(line);
     }
 
-    guard = std::make_pair(grid.findOne('^').value(), UP);
+    guard = std::make_pair(grid.findOne('^').value(), 0);
     while (grid.inBounds(guard.first)) {
         visited.insert(guard.first);
         guard = next(guard, grid);
@@ -68,7 +58,7 @@ int main () {
     if (part == 1)
         std::cout << "result is " << visited.size() << '\n';
     else {
-        guard = std::make_pair(grid.findOne('^').value(), UP);
+        guard = std::make_pair(grid.findOne('^').value(), 0);
         visited.erase(guard.first);
         for (Coord c: visited) {
             resPart2 += addObstruction(c, guard, grid);
