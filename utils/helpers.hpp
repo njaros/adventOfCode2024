@@ -299,6 +299,20 @@ public:
 		return Coord((int)this->back().size() - 1, (int)this->size() - 1);
 	}
 
+	const std::optional<Coord> findOne(const T& elt)
+	{
+		for (size_t y = 0; y < this->size(); ++y)
+		{
+			for (size_t x = 0; x < this->at(y).size(); ++x)
+			{
+				if (this->at(y).at(x) == elt) {
+					return Coord((int)x, (int)y);
+				}
+			}
+		}
+		return std::nullopt;
+	}
+
 	std::set<Coord> findAll(const T& elt)
 	{
 		std::set<Coord> found;
