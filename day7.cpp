@@ -2,18 +2,6 @@
 
 typedef std::vector<ull>::const_iterator Cit;
 
-ull concat(ull a, ull b) {
-	int exp = 1;
-	ull tmp = b;
-
-	while (tmp / 10) {
-		++exp;
-		tmp /= 10;
-	}
-
-	return (a * ullPow(10, exp) + b);
-}
-
 ull searchComb(Cit next, Cit end, ull current, ull goal, ui part) {
 	ull multRes;
 	ull addRes;
@@ -32,7 +20,7 @@ ull searchComb(Cit next, Cit end, ull current, ull goal, ui part) {
 		if (addRes)
 			return addRes;
 		if (part != 1)
-			return searchComb(next + 1, end, concat(current, *next), goal, part);
+			return searchComb(next + 1, end, concatNumbers(current, *next), goal, part);
 	}
 	return 0;
 }

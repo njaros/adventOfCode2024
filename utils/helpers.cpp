@@ -103,6 +103,17 @@ ull ullPow(ull a, ull b)
 	return res;
 }
 
+ull concatNumbers(ull a, ull b) {
+	int exp = 1;
+	ull tmp = b;
+
+	while (tmp / 10) {
+		++exp;
+		tmp /= 10;
+	}
+
+	return (a * ullPow(10, exp) + b);
+}
 
 std::optional< long long > divisible(long long a_, long long b_) /*work in progress*/
 {

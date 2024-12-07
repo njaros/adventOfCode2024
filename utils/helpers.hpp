@@ -471,6 +471,8 @@ long long intPow(long long a, long long b);
 
 ull ullPow(ull a, ull b);
 
+ull concatNumbers(ull a, ull b);
+
 namespace math
 {
 	ui ManhattanDist(const Coord& a, const Coord& b);
