@@ -91,8 +91,18 @@ long long intPow(long long a, long long b)
 		return 0;
 	while (b--)
 		res *= a;
-	return a;
+	return res;
 }
+
+ull ullPow(ull a, ull b)
+{
+	ull res = 1;
+
+	while (b--)
+		res *= a;
+	return res;
+}
+
 
 std::optional< long long > divisible(long long a_, long long b_) /*work in progress*/
 {
@@ -144,10 +154,10 @@ ui math::ManhattanDist(const Coord& a, const Coord& b)
 	return (labs(a.first - b.first) + labs(a.second - b.second));
 }
 
-std::pair<long, bool> inputLib::extractNextNumber(std::ifstream& input, char& monitorChar)
+std::pair<long long, bool> inputLib::extractNextNumber(std::ifstream& input, char& monitorChar)
 {
-	long res = 0;
-	long sign = 1;
+	long long res = 0;
+	long long sign = 1;
 	while (monitorChar != EOF)
 	{
 		if (isdigit(monitorChar))
@@ -172,8 +182,8 @@ std::pair<long, bool> inputLib::extractNextNumber(std::ifstream& input, char& mo
 inputLib::extracted inputLib::extractNextNumber(std::ifstream& input)
 {
 	char monitorChar = input.get();
-	long res = 0;
-	long sign = 1;
+	long long res = 0;
+	long long sign = 1;
 	while (monitorChar != EOF)
 	{
 		if (isdigit(monitorChar))
@@ -198,8 +208,8 @@ inputLib::extracted inputLib::extractNextNumber(std::ifstream& input)
 inputLib::extracted inputLib::extractNextNumberEndline(std::ifstream& input)
 {
 	char monitorChar = input.get();
-	long res = 0;
-	long sign = 1;
+	long long res = 0;
+	long long sign = 1;
 	while (monitorChar != EOF && monitorChar != '\n')
 	{
 		if (isdigit(monitorChar))

@@ -33,5 +33,7 @@
 
 #vscode
 .vscode/
+.vs/
 
 bac_a_sable.cpp
+test.cpp

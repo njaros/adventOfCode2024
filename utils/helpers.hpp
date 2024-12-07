@@ -469,6 +469,8 @@ std::optional< long long > divisible(long long a, long long b);
 
 long long intPow(long long a, long long b);
 
+ull ullPow(ull a, ull b);
+
 namespace math
 {
 	ui ManhattanDist(const Coord& a, const Coord& b);
@@ -476,9 +478,9 @@ namespace math
 
 namespace inputLib
 {
-	typedef std::pair< std::optional<long>, char > extracted;
+	typedef std::pair< std::optional<long long>, char > extracted;
 
-	std::pair<long, bool> extractNextNumber(std::ifstream& input, char& monitorChar);
+	std::pair<long long, bool> extractNextNumber(std::ifstream& input, char& monitorChar);
 
 	extracted extractNextNumber(std::ifstream& input);
 
