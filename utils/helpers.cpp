@@ -264,6 +264,19 @@ void inputLib::goToNextLine(std::ifstream& input, unsigned int times)
 	}
 }
 
+std::string& inputLib::carriageReturnDel(std::string& line) {
+	std::string::iterator it = line.begin();
+	while (it != line.end())
+	{
+		if (*it == '\r')
+			it = line.erase(it);
+		else
+			++it;
+	}
+	return line;
+}
+
+
 namespace experiment
 {
 

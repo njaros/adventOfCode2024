@@ -58,7 +58,6 @@ std::ostream& operator<<(std::ostream& o, const std::vector<T>& v)
 	{
 		o << elt << ' ';
 	}
-	o << '\n';
 	return o;
 }
 
@@ -388,9 +387,9 @@ public:
 			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
 
 		nextCoord = std::get<0>(current.value()) + Coord(0, 1);
-		if (nextCoord.second >= this->size() || nextCoord.second >= (*this)[nextCoord.second].size())
+		if (nextCoord.second >= this->size() || nextCoord.first >= (*this)[nextCoord.second].size())
 		{
-			nextCoord = Coord(std::get<0>(current.value()).first + 1, 0);
+			nextCoord = Coord(nextCoord.first + 1, 0);
 			if (nextCoord.first >= max)
 				return std::nullopt;
 			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
@@ -405,15 +404,38 @@ public:
 		if (!_isReverseColumnBrowsable())
 			return std::nullopt;
 
-		nextCoord = Coord((int)this->back().size() - 1, (int)this->size() - 1);
 		if (!current.has_value())
+		{
+			nextCoord = Coord((int)this->back().size() - 1, (int)this->size() - 1);
 			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
+		}
 
 		nextCoord = std::get<0>(current.value()) + Coord(0, -1);
 		if (nextCoord.second < 0)
 		{
-			nextCoord = Coord(std::get<0>(current.value()).first - 1, (int)this->size() - 1);
+			nextCoord = Coord(nextCoord.first - 1, (int)this->size() - 1);
 			if (nextCoord.first < 0)
+				return std::nullopt;
+			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
+		}
+		return std::make_tuple(nextCoord, 0, getPtr(nextCoord));
+	}
+
+	browser lineBrowse(const browser& current)
+	{
+		Coord nextCoord;
+
+		if (!current.has_value())
+		{
+			nextCoord = Coord(0, 0);
+			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
+		}
+
+		nextCoord = std::get<0>(current.value()) + Coord(1, 0);
+		if (nextCoord.first >= this->at(nextCoord.second).size())
+		{
+			nextCoord = Coord(0, nextCoord.second + 1);
+			if (nextCoord.second >= size())
 				return std::nullopt;
 			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
 		}
@@ -454,7 +476,7 @@ std::ostream& operator<<(std::ostream& o, const Grid<T>& g)
 {
 	for (const std::vector<T>& elt : g)
 	{
-		o << elt << std::endl;
+		o << elt << '\n';
 	}
 	return o;
 }
@@ -491,6 +513,8 @@ namespace inputLib
 	char goToNextLine(std::ifstream& input, char& monitorChar, unsigned int times = 1);
 
 	void goToNextLine(std::ifstream& input, unsigned int times = 1);
+
+	std::string& carriageReturnDel(std::string& line);
 
 }
 //Usefull class and containers
