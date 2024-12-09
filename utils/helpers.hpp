@@ -435,7 +435,7 @@ public:
 		if (nextCoord.first >= this->at(nextCoord.second).size())
 		{
 			nextCoord = Coord(0, nextCoord.second + 1);
-			if (nextCoord.second >= size())
+			if (nextCoord.second >= this->size())
 				return std::nullopt;
 			return std::make_tuple(nextCoord, 1, getPtr(nextCoord));
 		}
