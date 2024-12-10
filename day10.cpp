@@ -23,7 +23,7 @@ ui hikingScore(Coord current, int value, const Grid<char>& grid, std::set<Coord>
 }
 
 int main() {
-    ui part = 0;
+    ui part = 5;
     std::ifstream input;
     Grid<char> grid;
     std::string line;
