@@ -81,6 +81,17 @@ std::ostream& operator<<(std::ostream& o, const std::set<T>& s)
 	return o;
 }
 
+template <class T>
+std::ostream& operator<<(std::ostream& o, const std::list<T>& l)
+{
+	for (typename std::list<T>::const_iterator cit = l.begin(); cit != l.end(); ++cit)
+	{
+		o << *cit << ' ';
+	}
+	return o;
+}
+
+
 std::ostream& operator<<(std::ostream& o, const Coord& c);
 
 template <class T, class U>
