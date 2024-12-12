@@ -39,6 +39,8 @@ Coord operator+(const Coord& lhs, const Coord& rhs);
 Coord operator-(const Coord& lhs, const Coord& rhs);
 Coord& operator*=(Coord& c, int i);
 Coord operator*(const Coord& c, int i);
+Coord& operator/=(Coord& c, int i);
+Coord operator/(const Coord& c, int i);
 
 //Distance functions
 

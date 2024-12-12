@@ -47,6 +47,19 @@ Coord operator*(const Coord& c, int i)
 	return (cpy *= i);
 }
 
+Coord& operator/=(Coord& c, int i)
+{
+	c.first /= i;
+	c.second /= i;
+	return c;
+}
+
+Coord operator/(const Coord& c, int i)
+{
+	Coord cpy(c);
+	return (cpy /= i);
+}
+
 std::ostream& operator<<(std::ostream& o, const Coord& c)
 {
 	return o << '(' << c.first << ", " << c.second << ')';
