@@ -110,5 +110,5 @@ int main() {
     for (const std::set<Coord>& plot: plots)
         costCount += calcCost(plot, part);
 
-    std::cout << "642214 too low\n834546 too low\nresult is " << costCount << '\n';
+    std::cout << "result is " << costCount << '\n';
 }
