@@ -23,12 +23,14 @@
 #include <unordered_set>
 #include <queue>
 #include <bitset>
+#include "Matrix.hpp"
 
 //Usefull typedefs
 
 typedef unsigned int ui;
 typedef unsigned long long ull;
-typedef std::pair<int, int> Coord;
+typedef long long ll;
+typedef std::pair<long long, long long> Coord;
 typedef std::pair<long, bool> NumberRead;
 
 //Some << overloads
@@ -511,6 +513,15 @@ ull concatNumbers(ull a, ull b);
 namespace math
 {
 	ui ManhattanDist(const Coord& a, const Coord& b);
+
+	template<class T>
+	bool nearZero(const T &val)
+	{
+		if (val <= 0.00001 && val >= -0.00001)
+			return true;
+		return false;
+	}
+
 }
 
 namespace inputLib
