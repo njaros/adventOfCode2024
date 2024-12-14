@@ -513,6 +513,7 @@ ull concatNumbers(ull a, ull b);
 namespace math
 {
 	ui ManhattanDist(const Coord& a, const Coord& b);
+	long myModulo(long a, long b);
 
 	template<class T>
 	bool nearZero(const T &val)

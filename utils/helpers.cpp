@@ -178,6 +178,22 @@ ui math::ManhattanDist(const Coord& a, const Coord& b)
 	return (labs(a.first - b.first) + labs(a.second - b.second));
 }
 
+/**
+ * @brief Modulo which handle negative modulos
+ * 
+ * @param a 
+ * @param b 
+ * @return long 
+ */
+long math::myModulo(long a, long b) {
+	if (b <= 0)
+		return -1;
+	if (a >= 0)
+		return a % b;
+	else
+		return (b - (-a % b)) % b;
+}
+
 std::pair<long long, bool> inputLib::extractNextNumber(std::ifstream& input, char& monitorChar)
 {
 	long long res = 0;
