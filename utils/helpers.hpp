@@ -235,6 +235,12 @@ public:
 		}
 	}
 
+	void appendInLastLine(const T& elt) {
+		line& last = this->back();
+
+		last.push_back(elt);
+	}
+
 	template <class container>
 	void addColumn(size_t pos, const container& c)
 	{
@@ -313,7 +319,19 @@ public:
 		return Coord((int)this->back().size() - 1, (int)this->size() - 1);
 	}
 
-	const std::optional<Coord> findOne(const T& elt)
+	void swapCellsByRef(Coord a, Coord b) {
+		T& tmp = this->get(a);
+		this->get(a) = this->get(b);
+		this->get(b) = tmp;
+	}
+
+	void swapCells(Coord a, Coord b) {
+		T tmp = this->get(a);
+		this->get(a) = this->get(b);
+		this->get(b) = tmp;
+	}
+
+	const std::optional<Coord> findOne(const T& elt) const
 	{
 		for (size_t y = 0; y < this->size(); ++y)
 		{
@@ -327,7 +345,7 @@ public:
 		return std::nullopt;
 	}
 
-	std::set<Coord> findAll(const T& elt)
+	std::set<Coord> findAll(const T& elt) const
 	{
 		std::set<Coord> found;
 		for (size_t y = 0; y < this->size(); ++y)
@@ -491,7 +509,10 @@ std::ostream& operator<<(std::ostream& o, const Grid<T>& g)
 {
 	for (const std::vector<T>& elt : g)
 	{
-		o << elt << '\n';
+		for (const T& u : elt) {
+			o << u;
+		}
+		o << '\n';
 	}
 	return o;
 }
