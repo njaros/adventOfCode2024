@@ -331,7 +331,7 @@ public:
 		this->get(b) = tmp;
 	}
 
-	const std::optional<Coord> findOne(const T& elt) const
+	std::optional<Coord> findOne(const T& elt) const
 	{
 		for (size_t y = 0; y < this->size(); ++y)
 		{
