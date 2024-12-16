@@ -1,11 +1,30 @@
 #include "utils/helpers.hpp"
+#include <unistd.h>
 
-#define RIGHT Coord(0, 1)
-#define DOWN Coord(1, 0)
+#define RIGHT Coord(1, 0)
+#define DOWN Coord(0, 1)
 #define LEFT Coord(-1, 0)
 #define UP Coord(0, -1)
 
-const Coord dirs[] = {RIGHT, DOWN, LEFT, UP};
+Coord turnLeft(Coord dir) {
+    if (dir == LEFT)
+        return DOWN;
+    if (dir == DOWN)
+        return RIGHT;
+    if (dir == RIGHT)
+        return UP;
+    return LEFT;
+}
+
+Coord turnRight(Coord dir) {
+   if (dir == LEFT)
+        return UP;
+    if (dir == DOWN)
+        return LEFT;
+    if (dir == RIGHT)
+        return DOWN;
+    return RIGHT;
+}
 
 class DeerState {
 
@@ -16,12 +35,12 @@ public:
     ull _score; // <- number of steps done
     ull _distance; // <- heuristic
     ull _potential; // <- primary key element for open set (this is score + heuristic)
-    DeerState* _parent; // <- to recover the path (maybe I should use the close set for that ?)
+    std::pair<Coord, Coord> _parent; // <- to recover the path (maybe I should use the close set for that ?)
 
-    DeerState() : _pos(Coord(0, 0)), _dir(RIGHT), _score(0), _distance(0), _potential(0), _parent(nullptr)
+    DeerState() : _pos(Coord(0, 0)), _dir(RIGHT), _score(0), _distance(0), _potential(0), _parent(Coord(0, 0), Coord(0, 0))
     {}
 
-    DeerState(Coord pos, Coord dir, Coord end, ull score, DeerState* parent = nullptr):
+    DeerState(Coord pos, Coord dir, Coord end, ull score, std::pair<Coord, Coord> parent = std::make_pair(Coord(0, 0), Coord(0, 0))):
     _pos(pos), _dir(dir), _score(score), _parent(parent)
     {
         _distance = math::ManhattanDist(_pos, end);
@@ -47,7 +66,6 @@ public:
 
     DeerState(const DeerState& other) : _pos(other._pos), _dir(other._dir), _score(other._score),
     _distance(other._distance), _potential(other._potential), _parent(other._parent) {}
-    // too dangerous to copy a pointer here. I should never use this constructor.
 
     DeerState& operator=(const DeerState& o) {
         _pos = o._pos;
@@ -74,7 +92,7 @@ bool operator<(const DeerState& a, const DeerState& b) {
 }
 
 struct closeCompare {
-    bool operator()(const DeerState& a, const DeerState& b) {
+    bool operator()(const DeerState& a, const DeerState& b) const {
         if (a._pos < b._pos)
             return true;
         if (a._pos > b._pos)
@@ -86,11 +104,43 @@ struct closeCompare {
 typedef std::set<DeerState> OpenSet;
 typedef std::set<DeerState, closeCompare> CloseSet; // Sort visited DeerState by coordinates and orientation
 
-ull AStar(const Grid<char>& maze) {
+void drawPath(const CloseSet& close, OpenSet::iterator it, Grid<char> grid) {
+    DeerState deer = *it;
+    std::vector<DeerState> path;
+    path.push_back(deer);
+    while (deer._parent.second != Coord(0, 0)) {
+        deer = *(close.find(DeerState(deer._parent.first, deer._parent.second, Coord(0, 0), 0)));
+        path.push_back(deer);
+    }
+
+    for (std::vector<DeerState>::const_reverse_iterator rcit = path.rbegin(); rcit != path.rend(); ++rcit) {
+        grid.get(rcit->_pos) = 'X';
+        std::cout << rcit->_score << '\n';
+        std::cout << grid << '\n';
+        usleep(100000);
+    }
+}
+
+void safeInsert(OpenSet& open, CloseSet& close, DeerState state) {
+    CloseSet::iterator found = close.find(state);
+    if (found != close.end()) {
+        if (found->_score > state._score) {
+            close.erase(found);
+            close.insert(state);
+            open.insert(state);
+        }
+    }
+    else {
+        close.insert(state);
+        open.insert(state);
+    }
+}
+
+ull aStar(const Grid<char>& maze) {
     OpenSet open;
     CloseSet close;
     Coord goal = maze.findOne('E').value();
-    OpenSet::const_iterator current;
+    OpenSet::iterator current;
 
     DeerState start(
         maze.findOne('S').value(),
@@ -99,11 +149,55 @@ ull AStar(const Grid<char>& maze) {
         0);
     
     open.insert(start);
+    close.insert(start);
     current = open.begin();
-    while (!open.empty() && current->_dir != goal) {
+    while (!open.empty() && current->_pos != goal) {
+        if (maze.get(current->_pos + current->_dir) != '#') {
+            safeInsert(
+                open,
+                close,
+                DeerState(
+                    current->_pos + current->_dir,
+                    current->_dir,
+                    goal,
+                    current->_score + 1,
+                    std::make_pair(current->_pos, current->_dir)
+                    ));
+        }
+        if (maze.get(current->_pos + turnLeft(current->_dir)) != '#') {
+            safeInsert(
+                open,
+                close,
+                DeerState(
+                    current->_pos,
+                    turnLeft(current->_dir),
+                    goal,
+                    current->_score + 1000,
+                    std::make_pair(current->_pos, current->_dir)
+                    ));
+        }
+        if (maze.get(current->_pos + turnRight(current->_dir)) != '#') {
+            safeInsert(
+                open,
+                close,
+                DeerState(
+                    current->_pos,
+                    turnRight(current->_dir),
+                    goal,
+                    current->_score + 1000,
+                    std::make_pair(current->_pos, current->_dir)
+                    ));
+        }
         open.erase(current);
-        if ()
+        current = open.begin();
     }
+
+    // drawPath(close, current, maze);
+
+    if (current->_pos == goal)
+        return current->_score;
+    else
+        return 0;
 }
 
 int main() {
