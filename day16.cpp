@@ -102,45 +102,73 @@ struct closeCompare {
 };
 
 typedef std::set<DeerState> OpenSet;
-typedef std::set<DeerState, closeCompare> CloseSet; // Sort visited DeerState by coordinates and orientation
+typedef std::pair<Coord, Coord> Node;
+typedef std::pair<ull, std::set<Node>> Candidate;
+typedef std::map<Node, Candidate> CloseSet;
 
-void drawPath(const CloseSet& close, OpenSet::iterator it, Grid<char> grid) {
-    DeerState deer = *it;
-    std::vector<DeerState> path;
-    path.push_back(deer);
-    while (deer._parent.second != Coord(0, 0)) {
-        deer = *(close.find(DeerState(deer._parent.first, deer._parent.second, Coord(0, 0), 0)));
-        path.push_back(deer);
-    }
-
-    for (std::vector<DeerState>::const_reverse_iterator rcit = path.rbegin(); rcit != path.rend(); ++rcit) {
-        grid.get(rcit->_pos) = 'X';
-        std::cout << rcit->_score << '\n';
-        std::cout << grid << '\n';
-        usleep(100000);
+void countSteps(const CloseSet& close, Node current, std::set<Coord>& steps) {
+    if (current.first != Coord(0, 0))
+        steps.insert(current.first);
+    CloseSet::const_iterator found = close.find(current);
+    if (found != close.end()) {
+        for (Node n : found->second.second) {
+            countSteps(close, n, steps);
+        }
     }
 }
 
+void printMap(Grid<char> grid, const std::set<Coord>& steps) {
+    for (Coord c : steps) {
+        grid.get(c) = 'O';
+    }
+    std::cout << grid << '\n';
+}
+
 void safeInsert(OpenSet& open, CloseSet& close, DeerState state) {
-    CloseSet::iterator found = close.find(state);
+    Node newNode(state._pos, state._dir);
+    CloseSet::iterator found = close.find(newNode);
     if (found != close.end()) {
-        if (found->_score > state._score) {
+        if (found->second.first > state._score) {
             close.erase(found);
-            close.insert(state);
+            close[newNode] = Candidate(state._score, std::set<Node>({state._parent}));
+            open.insert(state);
+        }
+        else if (found->second.first == state._score) {
+            found->second.second.insert(state._parent);
             open.insert(state);
         }
     }
     else {
-        close.insert(state);
+        close[newNode] = Candidate(state._score, std::set<Node>({state._parent}));
         open.insert(state);
     }
 }
 
-ull aStar(const Grid<char>& maze) {
+bool stopLoop(Coord goal, DeerState current, ull& resP1, std::set<Coord>& save) {
+    static bool endReached = false;
+    if (goal == current._pos) {
+        // std::cout << current._score << '\n';
+        if (!endReached) {
+            resP1 = current._score;
+            save.insert(current._dir);
+            endReached = true;
+            return false;
+        }
+        if (current._score > resP1)
+            return true;
+        else
+            save.insert(current._dir);
+    }
+    return false;
+}
+
+ull aStar(const Grid<char>& maze, ui part) {
     OpenSet open;
     CloseSet close;
     Coord goal = maze.findOne('E').value();
     OpenSet::iterator current;
+    std::set<Coord> saveGoodDir;
+    ull resP1;
 
     DeerState start(
         maze.findOne('S').value(),
@@ -149,9 +177,15 @@ ull aStar(const Grid<char>& maze) {
         0);
     
     open.insert(start);
-    close.insert(start);
+    close[Node(start._pos, start._dir)] = Candidate(start._score, std::set<Node>({Node(Coord(0, 0), Coord(0, 0))}));
     current = open.begin();
-    while (!open.empty() && current->_pos != goal) {
+    while (!open.empty() && !stopLoop(goal, *current, resP1, saveGoodDir)) {
+        if (current->_pos == goal)
+        {
+            open.erase(current);
+            current = open.begin();
+            continue;
+        }
         if (maze.get(current->_pos + current->_dir) != '#') {
             safeInsert(
                 open,
@@ -192,16 +226,19 @@ ull aStar(const Grid<char>& maze) {
         current = open.begin();
     }
 
-    // drawPath(close, current, maze);
-
-    if (current->_pos == goal)
-        return current->_score;
-    else
-        return 0;
+    if (part == 1)
+        return resP1;
+    else {
+        std::set<Coord> steps;
+        for (Coord dir : saveGoodDir)
+            countSteps(close, Node(goal, dir), steps);
+        // printMap(maze, steps);
+        return steps.size();
+    }
 }
 
 int main() {
-    ui part = 5;
+    ui part = 0;
     std::ifstream input;
     Grid<char> maze;
     std::string line;
@@ -215,6 +252,6 @@ int main() {
         maze.addBackLine(line);
     }
 
-    std::cout << "result is " << aStar(maze) << '\n';
+    std::cout << "result is " << aStar(maze, part) << '\n';
     return 0;
 }

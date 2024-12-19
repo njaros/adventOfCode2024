@@ -44,6 +44,9 @@ Coord operator*(const Coord& c, int i);
 Coord& operator/=(Coord& c, int i);
 Coord operator/(const Coord& c, int i);
 
+template <class T>
+std::ostream& operator<<(std::ostream& o, const std::set<T>& s);
+
 //Distance functions
 
 long manhattanDist(const Coord& a, const Coord& b);
@@ -51,7 +54,7 @@ long manhattanDist(const Coord& a, const Coord& b);
 template <class T, class U>
 std::ostream& operator<<(std::ostream& o, const std::pair<T, U>& p)
 {
-	o << p.first << " : " << p.second;
+	o << p.first << " | " << p.second;
 	return o;
 }
 
@@ -103,7 +106,7 @@ std::ostream& operator<<(std::ostream& o, const std::map<T, U>& m)
 {
 	for (typename std::map<T, U>::const_iterator cit = m.begin(); cit != m.end(); ++cit)
 	{
-		o << cit->first << " | " << cit->second << std::endl;
+		o << cit->first << "-> " << cit->second << std::endl;
 	}
 	return o;
 }
