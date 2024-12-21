@@ -94,12 +94,12 @@ class Machine {
 
     public:
 
-    int A;
-    int B;
-    int C;
+    ull A;
+    ull B;
+    ull C;
     int ptr;
-    std::vector<int> program;
-    std::vector<int> output;
+    std::vector<ull> program;
+    std::vector<ull> output;
 
 
     Machine(): A(0), B(0), C(0), ptr(0) {}
@@ -119,6 +119,25 @@ std::ostream& operator<<(std::ostream& o, const Machine& m) {
     return o;
 }
 
+ull printed(ull A) {
+    return (((7 - (A % 8)) ^ (A >> (7 - (A % 8)))) ^ 4) % 8;
+}
+
+void recuP2(const std::vector<ull>& goal, int idx, ull A, std::set<ull>& res) {
+    ull next;
+    A *= 8;
+    for (ull i = 0; i < 8; ++i) {
+        next = A + i;
+        if (goal[idx] == printed(next))
+        {
+            if (idx == 0)
+                res.insert(next);
+            else
+                recuP2(goal, idx - 1, next, res);
+        }
+    }
+}
+
 int main() {
     ui part = 0;
     std::ifstream input;
@@ -134,10 +153,9 @@ int main() {
     while (!input.eof())
         m.program.push_back(inputLib::extractNextNumber(input).first.value());
 
-    std::cout << m;
-
     if (part == 1) {
         m.run();
+        std::cout << "result is ";
         for (int i = 0; i < m.output.size(); ++i) {
             if (i > 0)
                 std::cout << ',';
@@ -147,7 +165,9 @@ int main() {
     }
     else 
     {
-        
+        std::set<ull> result;
+        recuP2(m.program, m.program.size() - 1, 0, result);
+        std::cout << "result is " << *(result.begin()) << '\n';
     }
     return 0;
 }
