@@ -565,6 +565,8 @@ namespace inputLib
 
 	std::string& carriageReturnDel(std::string& line);
 
+	std::vector<std::string> split(const std::string& str, const char* delim);
+
 }
 //Usefull class and containers
 

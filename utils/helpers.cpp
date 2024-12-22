@@ -305,6 +305,20 @@ std::string& inputLib::carriageReturnDel(std::string& line) {
 	return line;
 }
 
+std::vector<std::string> inputLib::split(const std::string& str, const char* delim) {
+	char* cStr;
+	char* token;
+	std::vector<std::string> splitted;
+
+	cStr = strdup(str.c_str());
+	token = strtok(cStr, delim);
+	while (token) {
+		splitted.push_back(token);
+		token = strtok(NULL, delim);
+	}
+	free(cStr);
+	return splitted;
+}
 
 namespace experiment
 {
