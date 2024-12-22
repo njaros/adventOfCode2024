@@ -6,6 +6,7 @@
 #define HELPERS_HPP
 
 #include <iostream>
+#include <initializer_list>
 #include <fstream>
 #include <string>
 #include <cstring>
@@ -166,6 +167,13 @@ public:
 	typedef std::vector<T> column;
 	typedef std::vector<std::vector<T>> daddy;
 	typedef std::optional< std::tuple< Coord, bool, T* > > browser;
+
+	Grid(const std::initializer_list<std::initializer_list<T>> &il) {
+		typedef typename std::initializer_list<std::initializer_list<T> > Kinilist;
+		for (typename Kinilist::const_iterator cit = il.begin(); cit != il.end(); ++cit) {
+			this->push_back(line(*cit));
+		}
+	}
 
 	void addEmptyLine()
 	{
