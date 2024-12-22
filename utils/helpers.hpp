@@ -239,9 +239,7 @@ public:
 	}
 
 	void appendInLastLine(const T& elt) {
-		line& last = this->back();
-
-		last.push_back(elt);
+		this->back().push_back(elt);
 	}
 
 	template <class container>
