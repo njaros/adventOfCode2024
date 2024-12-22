@@ -322,12 +322,6 @@ public:
 		return Coord((int)this->back().size() - 1, (int)this->size() - 1);
 	}
 
-	void swapCellsByRef(Coord a, Coord b) {
-		T& tmp = this->get(a);
-		this->get(a) = this->get(b);
-		this->get(b) = tmp;
-	}
-
 	void swapCells(Coord a, Coord b) {
 		T tmp = this->get(a);
 		this->get(a) = this->get(b);
@@ -385,6 +379,12 @@ public:
 	T& get(const Coord& c)
 	{
 		return this->at(c.second).at(c.first);
+	}
+
+	template <class container>
+	void insertElems(const container& cont, const T& elem) {
+		for (typename container::const_iterator cit = cont.begin(); cit != cont.end(); ++cit)
+			get(*cit) = elem;
 	}
 
 	const T& operator()(const Coord& c) const
