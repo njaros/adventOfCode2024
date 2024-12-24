@@ -107,7 +107,7 @@ std::ostream& operator<<(std::ostream& o, const std::map<T, U>& m)
 {
 	for (typename std::map<T, U>::const_iterator cit = m.begin(); cit != m.end(); ++cit)
 	{
-		o << cit->first << "-> " << cit->second << std::endl;
+		o << cit->first << "-> " << cit->second << '\n';
 	}
 	return o;
 }
