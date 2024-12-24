@@ -5,22 +5,7 @@
 #define LEFT Coord(-1, 0)
 #define UP Coord(0, -1)
 
-typedef std::map<std::vector<char>, std::vector<char>> Cache;
 typedef std::pair<Coord, Coord> Move;
-Cache cache;
-
-const Grid<char> doorPad({
-    {'7', '8', '9'},
-    {'4', '5', '6'},
-    {'1', '2', '3'},
-    {'n', '0', 'A'}
-});
-
-const Grid<char> robotPad({
-    {'n', '^', 'A'},
-    {'<', 'v', '>'}
-});
-
 
 class Robot {
     
@@ -80,6 +65,7 @@ class Robot {
                     res2 += costs[Move(Coord(2, 1), Coord(2, 1))];
                     a2 += RIGHT;
                 }
+                res2 += costs[Move(Coord(2, 1), Coord(2, 0))];
             }
             else if (a2.second > b.second) {
                 res2 += costs[Move(Coord(2, 0), Coord(1, 0))];
@@ -89,6 +75,7 @@ class Robot {
                     res2 += costs[Move(Coord(2, 1), Coord(2, 1))];
                     a2 += RIGHT;
                 }
+                res2 += costs[Move(Coord(2, 1), Coord(2, 0))];
             }
         }
         else if (a.first > b.first) {
@@ -118,6 +105,7 @@ class Robot {
                     res2 += costs[Move(Coord(0, 1), Coord(0, 1))];
                     a2 += LEFT;
                 }
+                res2 += costs[Move(Coord(0, 1), Coord(2, 0))];
             }
             else if (a2.second > b.second) {
                 res2 += costs[Move(Coord(2, 0), Coord(1, 0))];
@@ -127,6 +115,7 @@ class Robot {
                     res2 += costs[Move(Coord(0, 1), Coord(0, 1))];
                     a2 += LEFT;
                 }
+                res2 += costs[Move(Coord(0, 1), Coord(2, 0))];
             }
         }
         else {
@@ -148,11 +137,9 @@ class Robot {
 
     public:
 
-    Coord index;
     std::map<Move, ull> moveCosts;
 
     Robot() {
-        index = robotPad.findOne('A').value();
         moveCosts[std::make_pair(Coord(1, 0), Coord(1, 0))] = 1;
         moveCosts[std::make_pair(Coord(1, 0), Coord(2, 0))] = 2;
         moveCosts[std::make_pair(Coord(1, 0), Coord(0, 1))] = 3;
@@ -184,7 +171,7 @@ class Robot {
         moveCosts[std::make_pair(Coord(2, 1), Coord(2, 1))] = 1;
     }
 
-    Robot(Robot& o): index(o.index) {
+    Robot(Robot& o) {
         moveCosts[std::make_pair(Coord(1, 0), Coord(1, 0))] = _getCost(Coord(1, 0), Coord(1, 0), o.moveCosts);
         moveCosts[std::make_pair(Coord(1, 0), Coord(2, 0))] = _getCost(Coord(1, 0), Coord(2, 0), o.moveCosts);
         moveCosts[std::make_pair(Coord(1, 0), Coord(0, 1))] = _getCost(Coord(1, 0), Coord(0, 1), o.moveCosts);
@@ -268,7 +255,7 @@ class Door {
         pad[std::make_pair('2', '6')] = {"^>A", ">^A"};
         pad[std::make_pair('2', '7')] = {"^^<A", "<^^A"};
         pad[std::make_pair('2', '8')] = {"^^A"};
-        pad[std::make_pair('2', '9')] = {">>^A", "^>>A"};
+        pad[std::make_pair('2', '9')] = {">^^A", "^^>A"};
         pad[std::make_pair('2', 'A')] = {">vA", "v>A"};
 
         pad[std::make_pair('3', '0')] = {"v<A", "<vA"};
@@ -329,7 +316,7 @@ class Door {
         pad[std::make_pair('7', '7')] = {"A"};
         pad[std::make_pair('7', '8')] = {">A"};
         pad[std::make_pair('7', '9')] = {">>A"};
-        pad[std::make_pair('7', 'A')] = {">>vvvA", "vvv>>A"};
+        pad[std::make_pair('7', 'A')] = {">>vvvA"};
 
         pad[std::make_pair('8', '0')] = {"vvvA"};
         pad[std::make_pair('8', '1')] = {"vv<A", "<vvA"};
@@ -353,7 +340,7 @@ class Door {
         pad[std::make_pair('9', '7')] = {"<<A"};
         pad[std::make_pair('9', '8')] = {"<A"};
         pad[std::make_pair('9', '9')] = {"A"};
-        pad[std::make_pair('9', 'A')] = {"vvA"};
+        pad[std::make_pair('9', 'A')] = {"vvvA"};
     }
 
     std::map<Move, ull> costs;
@@ -387,23 +374,20 @@ class Door {
         ull current;
 
         for (std::string elt : poss) {
-            std::cout << elt << '\n';
             current = 0;
             for (int i = 0; i < elt.size(); ++i) {
                 if (i == 0) {
-                    std::cout << Move(getCoordFromChar('A'), getCoordFromChar(elt[i])) << " = " << costs[Move(getCoordFromChar('A'), getCoordFromChar(elt[i]))] << '\n';
                     current += costs[Move(getCoordFromChar('A'), getCoordFromChar(elt[i]))];
                 }
                 else 
                 {
-                    std::cout << Move(getCoordFromChar(elt[i - 1]), getCoordFromChar(elt[i])) << " = " << costs[Move(getCoordFromChar(elt[i - 1]), getCoordFromChar(elt[i]))] << '\n';
                     current += costs[Move(getCoordFromChar(elt[i - 1]), getCoordFromChar(elt[i]))];
                 }
             }
             if (min > current)
                 min = current;
         }
-        return current;
+        return min;
     }
 
     ull calcCost(const std::string& code) {
@@ -451,7 +435,7 @@ int main() {
     std::string line;
     std::vector<char> instructions;
     std::set<std::vector<char>> poss;
-    ui res = 0;
+    ull res = 0;
     Robot r1;
     Robot r2(r1);
     Robot r3(r2);
@@ -476,8 +460,9 @@ int main() {
     Robot r22(r21);
     Robot r23(r22);
     Robot r24(r23);
+    Robot r25(r24);
 
-    if (getFileAndPart(100, input, part))
+    if (getFileAndPart(21, input, part))
         return errno;
 
     if (part == 1) {
@@ -492,18 +477,13 @@ int main() {
 
     else {
 
-        Door rf(r24);
+        Door rf(r25);
         while(!input.eof()) {
             getline(input, line);
             res += rf.calcCost(line) * getNumber(line);
             std::cout << rf.calcCost(line) << " | " << getNumber(line) << '\n';
         }
     }
-
-    std::cout << r1.moveCosts << '\n';
-    std::cout << r2.moveCosts << '\n';
-    std::cout << r3.moveCosts << '\n';
-    std::cout << r4.moveCosts << '\n';
 
     std::cout << "result is " << res << '\n';
 
