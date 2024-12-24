@@ -66,6 +66,26 @@ int getOperand(std::string op) {
     return OR;
 }
 
+std::string opToStr(int op) {
+    switch (op)
+    {
+    case XOR:
+        return " ^ ";
+        break;
+    case AND:
+        return " & ";
+        break;
+    case OR:
+        return " | ";
+        break;
+    
+
+    default:
+        return " = ";
+        break;
+    }
+}
+
 int main() {
     ui part;
     std::ifstream input;
@@ -74,6 +94,7 @@ int main() {
     ull resP1 = 0;
     ull exp = 0;
     NodeMap np;
+    std::set<std::string> resP2;
 
     if (getFileAndPart(24, input, part))
         return errno;
@@ -94,13 +115,71 @@ int main() {
     if (part == 1) {
         for (NodeMap::iterator it = np.begin(); it != np.end(); ++it) {
             if (it->first[0] == 'z') {
-                std::cout << it->first << "-> " << it->second.evaluate(np) << '\n';
+                it->second.evaluate(np);
                 if (it->second.val)
                     resP1 += ullPow(2, exp);
                 ++exp;
             }
         }
         std::cout << "result is " << resP1 << '\n';
+    }
+
+    else {
+        for (NodeMap::iterator it = np.begin(); it != np.end(); ++it) {
+            if (it->first[0] == 'z') {
+                if (it->second.op != XOR) {
+                    std::cout << it->first << " has wrong operator\n";
+                    resP2.insert(it->first);
+                }
+                else {
+                    int opL = np[it->second.left].op;
+                    int opR = np[it->second.right].op;
+                    // std::cout << opToStr(np[it->second.left].op) << " - " << opToStr(np[it->second.right].op) << '\n';
+                    if (opL == AND || opR == AND) {
+                        if (opL == AND) {
+                            std::cout << it->second.left << " has wrong operator\n";
+                            resP2.insert(it->second.left);
+                        }
+                        else {
+                            std::cout << it->second.right << " has wrong operator\n";
+                            resP2.insert(it->second.right);
+                        }
+                    }
+                    else {
+                        NodeMap::const_iterator itR = np.find(it->second.right);
+                        NodeMap::const_iterator itL = np.find(it->second.left);
+                        if (opR == OR) {
+                            // std::cout << opToStr(np[itR->second.left].op) << " - " << opToStr(np[itR->second.right].op) << '\n';
+                            if (np[itR->second.left].op != AND) {
+                                std::cout << itR->second.left << " has wrong operator \n";
+                                resP2.insert(itR->second.left);
+                            }
+                            if (np[itR->second.right].op != AND) {
+                                std::cout << itR->second.right << " has wrong operator \n";    
+                                resP2.insert(itR->second.right);
+                            }
+                        }
+                        else if (opL == OR) {
+                            // std::cout << opToStr(np[itL->second.left].op) << " - " << opToStr(np[itL->second.right].op) << '\n';
+                            if (np[itL->second.left].op != AND) {
+                                std::cout << itL->second.left << " has wrong operator \n";
+                                resP2.insert(itL->second.left);
+                            }
+                            if (np[itL->second.right].op != AND) {
+                                std::cout << itL->second.right << " has wrong operator \n";
+                                resP2.insert(itL->second.right);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (const std::string& elt : resP2) {
+            std::cout << elt << ',';
+        }
+        std::cout << '\n';
+        std::cout << "not jfb,jgt,mht,nbf,z05,z09,z30,z45\n";
+        std::cout << "not gbf,jfb,jgt,mht,nbf,z05,z09,z30\n";
     }
 
     return 0;
