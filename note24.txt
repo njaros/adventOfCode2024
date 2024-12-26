@@ -1,0 +1,22 @@
+z05
+z09
+
+0->  |  
+1->  &   &  
+2-> ...
+
+gbf -> replaced by a z
+hdt -> replaced by a z
+jgt <-> mht
+nbf -> replaced by a z
+z05 -> replaced by a retain
+z09 -> replaced by a left side of retain
+z30 -> replaced by a right term of a retain
+z45
+
+0->  &  
+1->  ^   |  
+2->  =   =   &   &  
+3->  =   =   ^   |
+
+gbf,hdt,jgt,mht,nbf,z05,z09,z30
